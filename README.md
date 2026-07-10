@@ -1,220 +1,261 @@
-# ⚙️ Smart Factory Dashboard — Industrial Asset Management System
+<div align="center">
 
-A full-stack **Industrial Asset Management System** built as the final assessment project for **UpSkill Campus**. This application provides a real-time dashboard to monitor, manage, and control industrial factory machines — simulating a production-grade smart factory environment.
+# ⚙️ Smart Factory Dashboard
 
-![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.3-green?style=flat-square&logo=springboot)
-![React](https://img.shields.io/badge/React-18-blue?style=flat-square&logo=react)
-![H2](https://img.shields.io/badge/Database-H2%20In--Memory-yellow?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
+### Industrial Asset Management System
+
+A production-grade full-stack application for real-time monitoring, management, and control of industrial factory machines — built with **Python/FastAPI** and **React**.
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![CI](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+[Features](#-features) · [Architecture](#-architecture) · [Quick Start](#-quick-start) · [API Docs](#-api-documentation) · [Testing](#-testing)
+
+</div>
 
 ---
 
-## 📋 Table of Contents
+## 🎯 Why This Project
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [API Endpoints](#-api-endpoints)
-- [Performance Testing](#-performance-testing)
-- [Screenshots](#-screenshots)
-- [Author](#-author)
+This project demonstrates **advanced full-stack engineering** with a focus on:
+
+- **Clean Architecture** — Separation of concerns with dedicated routers, services, and data layers
+- **Production Patterns** — Environment-based configuration, custom exception handling, structured error responses
+- **API Design** — RESTful endpoints with pagination, filtering, sorting, bulk operations, and Swagger documentation
+- **Testing** — Comprehensive pytest suite with isolated test databases and fixtures
+- **DevOps** — Docker containerization, docker-compose orchestration, and GitHub Actions CI/CD
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---------|-------------|
-| **Real-time Dashboard** | Live summary cards showing Total Assets, Running, Maintenance, Offline counts, and Average Uptime |
-| **CRUD Operations** | Create, Read, Update, and Delete industrial machines via REST API |
-| **Status Management** | Change machine status (RUNNING / MAINTENANCE / OFFLINE) via dropdown |
-| **Add New Machines** | Register new factory machines with name, status, and uptime percentage |
-| **Remove Machines** | Delete machines from the system with confirmation dialog |
-| **Search & Filter** | Search machines by name and filter by status in real-time |
-| **Performance Tested** | JUnit test proving the API handles 100+ requests under 200ms average |
-| **H2 Console** | Built-in database console for direct SQL inspection |
-
----
-
-## 🛠 Tech Stack
-
-### Backend
-- **Java 17** (Microsoft OpenJDK)
-- **Spring Boot 3.2.3** (Spring Web, Spring Data JPA)
-- **Lombok** — reduces boilerplate code
-- **H2 Database** — in-memory, zero-config database
-- **Maven** — build and dependency management
-
-### Frontend
-- **React 18** — functional components with hooks
-- **Axios** — HTTP client for API communication
-- **Tailwind CSS** — utility-first CSS framework
-- **Create React App** — project scaffolding
+| Category | Feature | Description |
+|----------|---------|-------------|
+| **Dashboard** | Real-time Statistics | Live cards showing Total Assets, Running, Maintenance, Offline, Avg Uptime |
+| **CRUD** | Full Asset Management | Create, Read, Update, Delete factory machines via REST API |
+| **Operations** | Bulk Operations | Delete multiple machines in a single request |
+| **Filtering** | Search & Filter | Real-time search by name + status filter (RUNNING / MAINTENANCE / OFFLINE) |
+| **API** | Pagination & Sorting | Server-side pagination with configurable sort fields and order |
+| **Monitoring** | Health Check | `/api/health` endpoint for uptime monitoring and DB connectivity |
+| **Docs** | Swagger UI | Interactive API explorer at `/docs` |
+| **DevOps** | Docker & CI/CD | One-command deployment + automated testing pipeline |
 
 ---
 
 ## 🏗 Architecture
 
 ```
-┌─────────────────┐       HTTP (Axios)       ┌─────────────────────┐       JPA/Hibernate       ┌──────────────┐
-│                 │  ──────────────────────►  │                     │  ──────────────────────►  │              │
-│   React.js      │   GET / POST / PUT / DEL  │   Spring Boot API   │    CRUD Operations        │  H2 Database │
-│   Frontend      │  ◄──────────────────────  │   (Port 8080)       │  ◄──────────────────────  │  (In-Memory) │
-│   (Port 3000)   │       JSON Response       │                     │       Entity Objects      │              │
-└─────────────────┘                           └─────────────────────┘                           └──────────────┘
+┌─────────────────┐         HTTP (Axios)         ┌───────────────────────────────────┐
+│                 │  ─────────────────────────►   │  FastAPI Application              │
+│   React 18      │   GET / POST / PUT / DELETE   │                                   │
+│   Frontend      │  ◄─────────────────────────   │  ┌───────────┐  ┌─────────────┐  │     ┌──────────┐
+│   (Port 3000)   │         JSON Response         │  │  Routers  │→ │  Services   │──│────►│  SQLite  │
+│                 │                               │  └───────────┘  └─────────────┘  │     │    DB    │
+└─────────────────┘                               │  ┌───────────┐  ┌─────────────┐  │     └──────────┘
+                                                  │  │  Schemas  │  │  Exceptions │  │
+                                                  │  └───────────┘  └─────────────┘  │
+                                                  └───────────────────────────────────┘
 ```
 
-### Data Flow
-1. **User interacts** with the React dashboard (click, type, select)
-2. **Axios sends** an HTTP request to the Spring Boot REST API
-3. **Controller** receives the request and delegates to the **Service** layer
-4. **Service** executes business logic and calls the **Repository**
-5. **Repository** (Spring Data JPA) performs the SQL operation on the **H2 database**
-6. **Response** flows back: Database → Repository → Service → Controller → JSON → React → UI updates
+### Layered Design
+
+| Layer | Responsibility | Files |
+|-------|---------------|-------|
+| **Routers** | HTTP request/response handling, input validation | `app/routers/` |
+| **Services** | Business logic, data aggregation, query composition | `app/services/` |
+| **Models** | Database schema definition (SQLAlchemy ORM) | `app/models.py` |
+| **Schemas** | Request/response validation (Pydantic v2) | `app/schemas.py` |
+| **Config** | Environment-based settings | `app/config.py` |
+| **Exceptions** | Custom error types + structured JSON error handlers | `app/exceptions.py` |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-upskillcampus/
-├── backend/                          # Spring Boot Backend
-│   ├── pom.xml                       # Maven dependencies
-│   ├── run.ps1                       # Quick-start script (Windows)
-│   ├── mvnw / mvnw.cmd              # Maven Wrapper
-│   └── src/
-│       ├── main/
-│       │   ├── java/com/uct/smartfactory/
-│       │   │   ├── IndustrialAssetManagementSystem.java   # Main class
-│       │   │   ├── model/
-│       │   │   │   └── Asset.java                         # JPA Entity
-│       │   │   ├── repository/
-│       │   │   │   └── AssetRepository.java               # Data access
-│       │   │   ├── service/
-│       │   │   │   └── AssetService.java                  # Business logic
-│       │   │   └── controller/
-│       │   │       └── AssetController.java                # REST endpoints
-│       │   └── resources/
-│       │       └── application.properties                  # H2 config
-│       └── test/
-│           └── java/com/uct/smartfactory/controller/
-│               └── AssetControllerPerformanceTest.java     # Load test
-│
-├── frontend/                         # React Frontend
-│   ├── package.json                  # npm dependencies
-│   ├── tailwind.config.js            # Tailwind CSS config
-│   ├── public/
-│   │   └── index.html
-│   └── src/
-│       ├── index.js                  # Entry point
-│       ├── index.css                 # Tailwind imports
-│       ├── App.jsx                   # Main dashboard
-│       └── components/
-│           └── AssetTable.jsx        # Machine table component
-│
-├── internship_report_sections.md     # Report text (Sections 5 & 6)
-├── setup-commands.md                 # Scaffolding commands
-└── README.md                         # This file
+smart-factory-dashboard/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                    # GitHub Actions CI pipeline
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── config.py                 # Pydantic BaseSettings (env-based)
+│   │   ├── database.py               # SQLAlchemy engine + session
+│   │   ├── models.py                 # ORM models
+│   │   ├── schemas.py                # Pydantic request/response schemas
+│   │   ├── exceptions.py             # Custom exceptions + handlers
+│   │   ├── routers/
+│   │   │   ├── assets.py             # Asset CRUD + stats endpoints
+│   │   │   └── health.py             # Health check endpoint
+│   │   └── services/
+│   │       └── asset_service.py      # Business logic layer
+│   ├── tests/
+│   │   ├── conftest.py               # Test fixtures + isolated DB
+│   │   └── test_assets.py            # 24 pytest test cases
+│   ├── main.py                       # FastAPI application entrypoint
+│   ├── requirements.txt              # Python dependencies
+│   ├── Dockerfile                    # Backend container
+│   └── .env.example                  # Environment template
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx                   # Main dashboard
+│   │   └── components/
+│   │       └── AssetTable.jsx        # Machine table component
+│   ├── package.json
+│   └── Dockerfile                    # Frontend container
+├── docker-compose.yml                # Full-stack orchestration
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### Prerequisites
-- **Java 17+** (JDK, not JRE)
-- **Node.js 16+** and **npm**
+### Option 1: Docker (Recommended)
 
-### 1. Clone the Repository
 ```bash
-git clone https://github.com/NallaSumang/upskillcampus.git
-cd upskillcampus
+git clone https://github.com/NallaSumang/Smart-Factory-Dashboard.git
+cd Smart-Factory-Dashboard
+docker-compose up --build
 ```
 
-### 2. Start the Backend
+- **Dashboard**: http://localhost:3000
+- **API Docs**: http://localhost:8000/docs
+
+### Option 2: Manual Setup
+
+#### Backend
+
 ```bash
 cd backend
 
-# On Windows (recommended):
-.\run.ps1
+# Create virtual environment
+python -m venv venv
 
-# Or manually:
-# Set JAVA_HOME to your JDK 17 path first
-.\mvnw spring-boot:run
+# Activate it
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # macOS/Linux
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy environment config
+cp .env.example .env
+
+# Start the server
+uvicorn main:app --reload
 ```
-The API will be available at **http://localhost:8080**
 
-### 3. Start the Frontend
+> API at **http://localhost:8000** · Swagger at **http://localhost:8000/docs**
+
+#### Frontend
+
 ```bash
-# Open a new terminal
 cd frontend
 npm install
 npm start
 ```
-The dashboard will open at **http://localhost:3000**
 
-### 4. Access the H2 Database Console
-Open **http://localhost:8080/h2-console** in your browser:
-- JDBC URL: `jdbc:h2:mem:factorydb`
-- Username: `sa`
-- Password: `password`
+> Dashboard at **http://localhost:3000**
 
 ---
 
-## 🔌 API Endpoints
+## 🔌 API Documentation
+
+### Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/assets` | Retrieve all industrial assets |
-| `GET` | `/api/assets/{id}` | Retrieve a single asset by ID |
-| `POST` | `/api/assets` | Register a new machine |
+| `GET` | `/api/assets` | List all assets (supports `?status=`, `?search=`, `?page=`, `?sort_by=`, `?sort_order=`) |
+| `GET` | `/api/assets/stats` | Dashboard statistics (counts + avg uptime) |
+| `GET` | `/api/assets/{id}` | Get single asset |
+| `POST` | `/api/assets` | Create new machine |
 | `PUT` | `/api/assets/{id}/status` | Update machine status |
 | `DELETE` | `/api/assets/{id}` | Remove a machine |
+| `POST` | `/api/assets/bulk-delete` | Bulk delete by IDs |
+| `GET` | `/api/health` | System health check |
 
-### Example: Add a New Machine
+### Request Examples
+
+**Create a machine:**
 ```bash
-curl -X POST http://localhost:8080/api/assets \
+curl -X POST http://localhost:8000/api/assets \
   -H "Content-Type: application/json" \
   -d '{"machineName": "3D Printer Unit C", "status": "RUNNING", "uptimePercentage": 91.2}'
 ```
 
+**Filter by status with search:**
+```bash
+curl "http://localhost:8000/api/assets?status=RUNNING&search=CNC&sort_by=uptime_percentage&sort_order=desc"
+```
+
+**Bulk delete:**
+```bash
+curl -X POST http://localhost:8000/api/assets/bulk-delete \
+  -H "Content-Type: application/json" \
+  -d '{"ids": [1, 3, 5]}'
+```
+
+### Error Responses
+
+All errors return structured JSON:
+
+```json
+{
+  "error": "not_found",
+  "message": "Asset with id 999 not found",
+  "asset_id": 999
+}
+```
+
 ---
 
-## 📊 Performance Testing
+## 🧪 Testing
 
-A JUnit 5 test simulates **100 sequential requests** to the `GET /api/assets` endpoint and asserts the average response time is **under 200ms**.
-
-### Run the Test
 ```bash
 cd backend
-.\mvnw test -Dtest=AssetControllerPerformanceTest
+venv\Scripts\activate
+pytest tests/ -v
 ```
 
-### Results
-```
-Total Time for 100 requests: 526 ms
-Average Time per request:    5.26 ms  ✅ (well under 200ms threshold)
+### Test Coverage
 
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-```
+| Test Class | Tests | What's Covered |
+|-----------|-------|----------------|
+| `TestListAssets` | 5 | Empty list, populated list, filter by status, search, no-match |
+| `TestGetAsset` | 2 | Existing asset, 404 for missing |
+| `TestCreateAsset` | 6 | Success, defaults, empty name, invalid uptime, negative uptime, invalid status |
+| `TestUpdateStatus` | 3 | Success, 404, invalid status value |
+| `TestDeleteAsset` | 2 | Success + verification, 404 |
+| `TestBulkDelete` | 1 | Multi-delete with remaining verification |
+| `TestDashboardStats` | 2 | Correct aggregation, empty state |
+| `TestHealthCheck` | 1 | Healthy status + DB connectivity |
+
+**Total: 22 test cases**
 
 ---
 
-## 📸 Screenshots
+## 🛠 Tech Stack
 
-### Dashboard View
-The main dashboard displays all registered factory machines with real-time status indicators, uptime progress bars, and interactive controls.
-
-### Features Demonstrated
-- ⚡ Dark-themed responsive UI
-- 📊 Summary cards with live statistics
-- 🔍 Search and filter functionality
-- ➕ Add / 🗑 Delete machine operations
-- 🔄 Status dropdown for instant updates
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **API Framework** | FastAPI 0.115 | High-performance async Python web framework |
+| **ORM** | SQLAlchemy 2.0 | Database abstraction with modern declarative mapping |
+| **Validation** | Pydantic v2 | Type-safe request/response serialization |
+| **Database** | SQLite | Zero-configuration persistent storage |
+| **Server** | Uvicorn | Lightning-fast ASGI server |
+| **Frontend** | React 18 | Component-based UI with hooks |
+| **HTTP Client** | Axios | Promise-based API communication |
+| **Styling** | Tailwind CSS | Utility-first responsive design |
+| **Testing** | pytest + httpx | Isolated test suite with fixtures |
+| **CI/CD** | GitHub Actions | Automated test + build pipeline |
+| **Containers** | Docker + Compose | One-command full-stack deployment |
 
 ---
 
@@ -228,8 +269,4 @@ The main dashboard displays all registered factory machines with real-time statu
 
 ## 📄 License
 
-This project is part of the **UpSkill Campus Industrial Internship Program** final assessment.
-
----
-
-> Built with ❤️ for the UpSkill Campus Final Assessment
+This project is licensed under the MIT License.

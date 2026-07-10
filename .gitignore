@@ -1,29 +1,33 @@
-# Backend
-backend/target/
-backend/.mvn/wrapper/maven-wrapper.jar
-backend/*.log
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+venv/
+.env
+factory.db
+test.db
 
-# Frontend
-frontend/node_modules/
+# Node / React
+node_modules/
 frontend/build/
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
-frontend/npm-debug.log*
+.DS_Store
 
 # IDE
+.vscode/
 .idea/
 *.iml
-.vscode/
 *.swp
 *.swo
 
 # OS
-.DS_Store
 Thumbs.db
 
-# Misc
-*.class
-*.jar
-!backend/.mvn/wrapper/maven-wrapper.jar
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage

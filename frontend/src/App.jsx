@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AssetTable from './components/AssetTable';
 
-const API_URL = 'http://localhost:8080/api/assets';
+const API_URL = 'http://localhost:8000/api/assets';
 
 function App() {
   const [assets, setAssets] = useState([]);
@@ -21,7 +21,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error("Error fetching assets:", err);
-      setError("Failed to load asset data. Ensure backend is running on port 8080.");
+      setError("Failed to load asset data. Ensure backend is running on port 8000.");
     } finally {
       setLoading(false);
     }
